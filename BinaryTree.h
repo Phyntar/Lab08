@@ -105,6 +105,7 @@ public:
    short leftmost() const;
 
    std::vector< short > preorder() const;
+   std::vector< short > postorder() const;
 
 
 private:
@@ -184,6 +185,8 @@ private:
    //   values in preorder.
    static void preorder( std::vector< short > & traversal, 
       const BinaryNode * subtree );
+   static void postorder(std::vector< short > & traversal,
+	   const BinaryNode * subtree);
 };
 
 
@@ -257,10 +260,9 @@ long
 }
 
 
-long 
-   BinaryTree:: size() const
+long BinaryTree:: size() const
 {
-   return  size( tree_ );
+	return size(tree_);
 }
 
 
@@ -286,6 +288,13 @@ std::vector< short >
    return traversal;
 }
 
+std::vector< short >
+BinaryTree::postorder() const
+{
+	std::vector< short > traversal;
+	postorder(traversal, tree_);
+	return traversal;
+}
 
 // code for helper functions
 
@@ -366,33 +375,85 @@ void
 }
 
 
-long 
-   BinaryTree:: size( const BinaryNode * subtree )
+long BinaryTree:: size( const BinaryNode * subtree )
 {
-   return  -1;
+
+	if (subtree == NULL)
+	{
+		return 0;
+	}
+	if ((subtree->left_ == NULL) && (subtree->right_ == NULL))
+	{
+		return 1;
+	}
+	
+	return 1 + size(subtree->left_) + size(subtree->right_);
 }
 
 
-long 
-   BinaryTree:: height( const BinaryNode * subtree )
-{
-   return  -2;
-}
+	long BinaryTree:: height( const BinaryNode * subtree )
+	{
+		if (subtree == NULL)
+		{
+			return 0;
+		}
+
+		long left = height(subtree->left_);
+		long right = height(subtree->right_);
+
+		if (left < right)
+		{
+			return right + 1;
+		}
+		else
+		{
+			return left + 1;
+		}
+
+	
+	}
 
 
 long 
    BinaryTree:: leaves( const BinaryNode * subtree )
 {
-   return  -3;
+	if (subtree == NULL)
+	{
+		return 0;
+	}
+	if ((subtree->left_ == NULL) && (subtree->right_ == NULL))
+	{
+		return 1;
+	}
+
+	return leaves(subtree->left_) + leaves(subtree->right_);
 }
 
 
 short 
    BinaryTree:: leftmost( const BinaryNode * subtree )
 {
-   return -4;
+	if (subtree->left_ == NULL)
+	{
+		return subtree->entry_;
+	}
+	
+	return leftmost(subtree->left_);
+
+
 }
 
+
+void BinaryTree::postorder(std::vector<short> & traversal, const BinaryNode * subtree)
+{
+	if (subtree != NULL)
+	{
+		postorder(traversal, subtree->left_);
+		postorder(traversal, subtree->right_);
+		traversal.push_back(subtree->entry_);
+	}
+
+}
 
 void
    BinaryTree:: preorder( std::vector< short > & traversal, 
